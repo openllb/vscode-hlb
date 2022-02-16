@@ -1,0 +1,156 @@
+{
+  "name": "HLB",
+  "displayName": "HLB",
+  "version": "0.0.1",
+  "publisher": "OpenLLB",
+  "description": "HLB for Visual Studio Code",
+  "author": {
+    "name": "Edgar Lee",
+    "email": "edgarhinshunlee@gmail.com"
+  },
+  "license": "MIT",
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Debuggers",
+    "Formatters"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openllb/vscode-hlb.git"
+  },
+  "bugs": {
+    "url": "https://github.com/openllb/vscode-hlb/issues"
+  },
+  "keywords": [
+    "multi-root ready"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "bundle": "esbuild src/extension.ts --bundle --outdir=dist --external:vscode --format=cjs --platform=node",
+    "bundle-dev": "npm run bundle -- --sourcemap",
+    "bundle-watch": "npm run bundle -- --sourcemap --watch",
+    "test-compile": "tsc -p ./",
+    "compile": "npm run bundle",
+    "watch": "tsc -watch -p ./",
+    "lint": "gts lint src",
+    "fix-lint": "gts fix src",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "dependencies": {
+    "glob": "7.1.7",
+    "npm-which": "^3.0.1",
+    "vscode-debugadapter": "1.45.0",
+    "vscode-debugadapter-testsupport": "1.45.0",
+    "vscode-debugprotocol": "1.45.0",
+    "vscode-languageclient": "7.0.0",
+    "vscode-languageserver-protocol": "3.16.0"
+  },
+  "devDependencies": {
+    "@types/glob": "7.1.3",
+    "@types/mocha": "7.0.2",
+    "@types/node": "13.13.46",
+    "@types/vscode": "1.59.0",
+    "@types/npm-which": "^3.0.1",
+    "esbuild": "0.12.21",
+    "gts": "3.1.0",
+    "mocha": "9.2.0",
+    "prettier": "2.2.1",
+    "ts-loader": "7.0.5",
+    "tslint": "6.1.3",
+    "typescript": "3.9.9"
+  },
+  "engines": {
+    "vscode": "^1.59.0"
+  },
+  "activationEvents": [
+    "onLanguage:hlb"
+  ],
+  "main": "./dist/ext/extension.js",
+  "capabilities": {
+    "virtualWorkspaces": false,
+    "untrustedWorkspaces": {
+      "supported": "limited"
+    }
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "hlb",
+        "extensions": [
+          ".hlb"
+        ],
+        "aliases": [
+          "HLB"
+        ]
+      }
+    ],
+    "configurationDefaults": {
+      "[hlb]": {
+        "editor.insertSpaces": false,
+        "editor.formatOnSave": true
+      }
+    },
+    "commands": [
+      {
+        "command": "hlb.run.file",
+        "title": "HLB: Run Current file",
+        "description": "Run a function of the current file."
+      },
+      {
+        "command": "hlb.debug.file",
+        "title": "HLB: Debug Current file",
+        "description": "Debug a function of the current file."
+      }
+    ],
+    "breakpoints": [
+      {
+        "language": "hlb"
+      }
+    ],
+    "debuggers": [
+      {
+        "type": "hlb",
+        "label": "HLB",
+        "languages": [
+          "hlb"
+        ],
+        "configurationSnippets": [
+          {
+            "label": "HLB: Launch function",
+            "description": "Debug the function",
+            "body": {
+              "name": "${3:Launch test function}",
+              "type": "hlb",
+              "request": "launch",
+              "module": "^\"${1:\\${file\\}}\"",
+              "target": "${2:default}"
+            }
+          }
+        ],
+        "configurationAttributes": {
+          "launch": {
+            "required": [],
+            "properties": {
+              "stopOnEntry": {
+                "type": "boolean",
+                "description": "Automatically stop program after launch.",
+                "default": false
+              },
+              "module": {
+                "type": "string",
+                "description": "Path to HLB module.",
+                "default": "${workspaceFolder}/build.hlb"
+              },
+              "target": {
+                "type": "string",
+                "description": "Target function to run.",
+                "default": "default"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

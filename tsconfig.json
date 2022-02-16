@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"outDir": "out",
+		"sourceMap": true,
+		"target": "es2017",
+		"lib": [
+			"es2017"
+		],
+		//"strict": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"alwaysStrict": true,
+		"strictBindCallApply": true,
+		"strictFunctionTypes": true,
+		"esModuleInterop": true,
+		//"strictNullChecks": true,
+		//"strictPropertyInitialization": true,
+	},
+	"exclude": [
+		"node_modules"
+	]
+}

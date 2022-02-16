@@ -1,0 +1,10 @@
+**/*.map
+**/tslint.json
+.git/
+.gitignore
+.prettierrc.json
+.vscode/
+build/
+node_modules/
+src/
+tsconfig.json
