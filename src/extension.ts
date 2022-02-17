@@ -9,7 +9,7 @@ export function activate(context: vscode.ExtensionContext) {
 	hlbDAP(context);
 
 	// Run the LSP language server as a separate process.
-	hlbLSP(context);
+	// hlbLSP(context);
 }
 
 export function deactivate() {

@@ -1,0 +1,11 @@
+{
+	"version": "0.2.0",
+	"configurations":[
+		{
+			"type": "hlb",
+			"name": "Debug build.hlb",
+			"request": "launch",
+			"program": "build.hlb"
+		}
+	]
+}

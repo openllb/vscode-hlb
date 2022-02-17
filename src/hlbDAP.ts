@@ -1,11 +1,11 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { WorkspaceFolder, DebugConfiguration, ProviderResult } from 'vscode';
+import { WorkspaceFolder, DebugConfiguration, ProviderResult, CancellationToken } from 'vscode';
 
 export function hlbDAP(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
-		vscode.commands.registerCommand('hlb.run.file', (resource: vscode.Uri) => {
+		vscode.commands.registerCommand('extension.hlb.runEditorContents', (resource: vscode.Uri) => {
 			let targetResource = resource;
 			if (!targetResource && vscode.window.activeTextEditor) {
 				targetResource = vscode.window.activeTextEditor.document.uri;
@@ -15,12 +15,12 @@ export function hlbDAP(context: vscode.ExtensionContext) {
 					type: 'hlb',
 					name: 'Run File',
 					request: 'launch',
-					module: targetResource.fsPath,
+					program: targetResource.fsPath,
 					target: 'default'
-				});
+				}, { noDebug: true });
 			}
 		}),
-		vscode.commands.registerCommand('hlb.debug.file', (resource: vscode.Uri) => {
+		vscode.commands.registerCommand('extension.hlb.debugEditorContents', (resource: vscode.Uri) => {
 			let targetResource = resource;
 			if (!targetResource && vscode.window.activeTextEditor) {
 				targetResource = vscode.window.activeTextEditor.document.uri;
@@ -30,7 +30,7 @@ export function hlbDAP(context: vscode.ExtensionContext) {
 					type: 'hlb',
 					name: 'Debug File',
 					request: 'launch',
-					module: targetResource.fsPath,
+					program: targetResource.fsPath,
 					target: 'default'
 				});
 			}
@@ -43,16 +43,13 @@ export function hlbDAP(context: vscode.ExtensionContext) {
 
 	const factory = new DebugAdapterExecutableFactory();
 	context.subscriptions.push(vscode.debug.registerDebugAdapterDescriptorFactory('hlb', factory));
-	if ('dispose' in factory) {
-		context.subscriptions.push(factory);
-	}
 }
 
 class HLBConfigurationProvider implements vscode.DebugConfigurationProvider {
 	resolveDebugConfiguration(
 		folder: WorkspaceFolder | undefined,
-		config: DebugConfiguration
-		// token?: CancellationToken
+		config: DebugConfiguration,
+		token?: CancellationToken
 	): ProviderResult<DebugConfiguration> {
 		if (!config.type && !config.request && !config.name) {
 			const editor = vscode.window.activeTextEditor;
@@ -60,13 +57,12 @@ class HLBConfigurationProvider implements vscode.DebugConfigurationProvider {
 				config.type = 'hlb';
 				config.name = 'Launch';
 				config.request = 'launch';
-				config.module = '${file}';
+				config.program = '${file}';
 				config.target = 'default';
-				config.stopOnEntry = true;
 			}
 		}
 
-		if (!config.module) {
+		if (!config.program) {
 			return vscode.window.showInformationMessage('Cannot find a program to debug').then(() => {
 				// Abort launch.
 				return undefined;
@@ -82,14 +78,27 @@ class DebugAdapterExecutableFactory implements vscode.DebugAdapterDescriptorFact
 		_session: vscode.DebugSession,
 		executable: vscode.DebugAdapterExecutable | undefined
 	): ProviderResult<vscode.DebugAdapterDescriptor> {
+		console.log(_session.configuration);
 		// Allow overriding executable.
 		if (!executable) {
-			const command = '/home/edgarl/go/bin/hlb';
-			const args = ['run', '--dap'];
+			const command = 'hlb';
+			let args = ['run', '--dap'];
+
+			const config = _session.configuration;
+			if (!config.noDebug) {
+				args.push('--debug');
+				console.log("debug");
+			}
+			if (config.program) {
+				args.push(config.program);
+			}
+
 			const options = {
-				cwd: '/home/edgarl/code/vscode-hlb',
+				cwd: _session.workspaceFolder.uri.fsPath,
 				env: { BUILDKIT_HOST: 'docker-container://buildkitd' }
 			};
+			console.log(options.cwd);
+
 			executable = new vscode.DebugAdapterExecutable(command, args, options);
 		}
 

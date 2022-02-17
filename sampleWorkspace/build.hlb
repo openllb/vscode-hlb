@@ -1,0 +1,21 @@
+fs default() {
+	build "alpine"
+}
+
+fs src() {
+	local "."
+	breakpoint
+}
+
+fs _build(string name) {
+	image name
+	run "echo foo" with option {
+		mount src "/in"
+		mount scratch "/in/dist"
+	}
+
+	run "echo bar" with breakpoint
+	run "echo build > /out/build" with option {
+		mount scratch "/out" as build
+	}
+}

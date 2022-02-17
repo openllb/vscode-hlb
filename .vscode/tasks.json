@@ -1,43 +1,49 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "type": "npm",
-            "script": "compile",
-            "isBackground": false,
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": "$tsc-watch"
-        },
-        {
-            "type": "npm",
-            "script": "watch",
-            "group": "build",
-            "isBackground": true,
-            "problemMatcher": [
-                "$ts-webpack-watch",
-                "$tslint-webpack-watch"
-            ]
-        },
-        {
-            "type": "npm",
-            "script": "compile-web",
-            "problemMatcher": [
-                "$ts-webpack",
-                "$tslint-webpack"
-            ]
-        },
-        {
-            "type": "npm",
-            "script": "watch-web",
-            "group": "build",
-            "isBackground": true,
-            "problemMatcher": [
-                "$ts-webpack-watch",
-                "$tslint-webpack-watch"
-            ]
-        }
-    ]
+	"version": "2.0.0",
+	"command": "npm",
+	"type": "shell",
+	"presentation": {
+		"reveal": "never"
+	},
+	"args": ["run", "compile"],
+	"isBackground": true,
+	"problemMatcher": "$tsc-watch",
+	"tasks": [
+		{
+			"type": "typescript",
+			"tsconfig": "tsconfig.json",
+			"problemMatcher": [
+				"$tsc"
+			]
+		},
+		{
+			"type": "npm",
+			"script": "watch",
+			"problemMatcher": "$tsc-watch",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"type": "npm",
+			"script": "bundle-watch",
+			"group": "build",
+			"problemMatcher": "$esbuild-watch",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "never"
+			}
+		},
+		{
+			"type": "npm",
+			"script": "bundle-dev",
+			"group": "build",
+			"problemMatcher": "$esbuild",
+		}
+	]
 }

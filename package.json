@@ -66,7 +66,7 @@
   "activationEvents": [
     "onLanguage:hlb"
   ],
-  "main": "./dist/ext/extension.js",
+  "main": "./dist/extension.js",
   "capabilities": {
     "virtualWorkspaces": false,
     "untrustedWorkspaces": {
